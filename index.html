@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Quiet Maze</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2F2A55">
+<meta name="description" content="A gentle dopamine detox with a 30-day trail, urge timer, journal and accountability partner.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Quiet Maze">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#2F2A55; --floor:#EEEAF6; --panel:#FBFAFE; --line:#D3CCE6;
+  --cheese:#F6BB1A; --cheese-d:#D8960A; --cheese-l:#FFE08A;
+  --mint:#3E9E7E; --rose:#C94F72; --rose-l:#F1B8C8; --mute:#5F5B80;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--floor);color:var(--ink);min-height:100dvh;-webkit-font-smoothing:antialiased;line-height:1.4}
+#app{max-width:480px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 16px 120px}
+h1{font-size:31px;line-height:1.05;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:15px;font-weight:800;margin:18px 0 8px}
+p{margin:0 0 12px}
+.sub{color:var(--mute);font-size:15px;margin-bottom:16px}
+small,.small{font-size:13px;color:var(--mute)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #6B5BD6;outline-offset:2px}
+
+.card{background:var(--panel);border:2.5px solid var(--ink);border-radius:16px;padding:16px;box-shadow:4px 4px 0 var(--ink);margin-bottom:20px}
+.card.flat{box-shadow:none;border-width:2px}
+.btn{font-weight:800;border:2.5px solid var(--ink);background:var(--cheese);border-radius:12px;padding:13px 18px;box-shadow:3px 3px 0 var(--ink);cursor:pointer;font-size:16px}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.ghost{background:var(--panel)}
+.btn.block{width:100%}
+.btn.sm{padding:8px 12px;font-size:14px;box-shadow:2px 2px 0 var(--ink)}
+.row{display:flex;gap:10px;align-items:center}
+.row.sp{justify-content:space-between}
+.nav{display:flex;gap:10px;margin-top:22px}
+.nav .btn:last-child{flex:1}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:2px solid var(--ink);border-radius:999px;padding:9px 14px;background:var(--panel);font-weight:600;cursor:pointer;font-size:15px}
+.chip.on{background:var(--cheese);font-weight:800}
+
+.pick{display:block;width:100%;text-align:left;border:2.5px solid var(--ink);border-radius:14px;background:var(--panel);padding:14px;margin-bottom:10px;cursor:pointer}
+.pick.on{background:var(--cheese-l);box-shadow:3px 3px 0 var(--ink)}
+.pick b{display:block;font-size:17px}
+.pick span{color:var(--mute);font-size:14px}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fld label{display:block;font-size:13px;color:var(--mute);font-weight:600;margin-bottom:4px}
+details.card summary{cursor:pointer;font-weight:800;font-size:17px}
+details.card ul{margin:10px 0 6px;padding-left:20px}
+details.card li{margin-bottom:4px}
+details.card p{margin:8px 0 0}
+input[type=number],input[type=text],input[type=time],textarea{width:100%;font:inherit;font-size:17px;color:var(--ink);background:var(--panel);border:2.5px solid var(--ink);border-radius:12px;padding:12px}
+textarea{min-height:110px;resize:vertical}
+input[type=range]{width:100%;accent-color:var(--ink)}
+
+.dots{display:flex;gap:6px;margin-bottom:22px}
+.dots i{flex:1;height:8px;border-radius:99px;background:var(--line)}
+.dots i.on{background:var(--ink)}
+.dots i.cur{background:var(--cheese);outline:2px solid var(--ink)}
+
+.amt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1.5px dashed var(--line)}
+.amt:last-child{border-bottom:0}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper b{min-width:76px;text-align:center;font-size:17px}
+.round{width:40px;height:40px;border-radius:50%;border:2.5px solid var(--ink);background:var(--panel);font-weight:800;font-size:20px;cursor:pointer;line-height:1}
+
+.top{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-weight:800}
+.hello{margin-bottom:14px}
+.track{position:relative;margin:34px 6px 22px 6px}
+.track .bar{height:16px;border:2.5px solid var(--ink);border-radius:99px;background:var(--panel);overflow:hidden}
+.track .fill{height:100%;background:var(--cheese)}
+.track .mouse{position:absolute;bottom:14px;transform:translateX(-50%)}
+.track .end{position:absolute;right:-10px;bottom:-6px}
+
+.limit{padding:12px 0;border-bottom:1.5px dashed var(--line)}
+.limit:last-child{border-bottom:0;padding-bottom:0}
+.limit:first-of-type{padding-top:4px}
+.meter{height:10px;border:2px solid var(--ink);border-radius:99px;background:#fff;margin:8px 0 6px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--mint)}
+.limit.near .meter i{background:var(--cheese)}
+.limit.over .meter i{background:var(--rose)}
+.limit .msg{font-size:13px;color:var(--mute)}
+.limit.over .msg{color:var(--rose);font-weight:600}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+.task{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;padding:10px 0;cursor:pointer;border-bottom:1.5px dashed var(--line);font-size:16px}
+.task:last-child{border-bottom:0}
+.task .box{flex:none;width:26px;height:26px;border:2.5px solid var(--ink);border-radius:8px;display:grid;place-items:center;font-weight:800;background:var(--panel)}
+.task.done .box{background:var(--cheese)}
+.task.done span:last-child{text-decoration:line-through;color:var(--mute)}
+
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px}
+.sc{border:2px solid var(--ink);border-radius:10px;background:var(--panel);padding:10px 2px;font-size:13px;font-weight:600;cursor:pointer}
+.sc.on{background:var(--cheese);font-weight:800}
+
+.note{background:var(--cheese-l);border:2px solid var(--ink);border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:15px}
+.why{border-left:5px solid var(--cheese);padding:2px 0 2px 12px;margin-bottom:20px}
+.why q{font-weight:600;display:block;font-size:17px}
+
+.ringwrap{display:grid;place-items:center;margin:8px 0 14px;position:relative}
+.ringwrap .t{position:absolute;font-size:44px;font-weight:800;letter-spacing:-.02em}
+.tip{min-height:46px;font-size:16px;text-align:center;margin-bottom:12px}
+.hist{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1.5px dashed var(--line);font-size:15px}
+.hist:last-child{border-bottom:0}
+.tag{font-weight:800;font-size:13px;border:2px solid var(--ink);border-radius:99px;padding:2px 10px;white-space:nowrap;height:fit-content}
+.tag.ok{background:#BFE6D8}.tag.no{background:var(--rose-l)}
+
+.entry{border-bottom:1.5px dashed var(--line);padding:12px 0}
+.entry:last-child{border-bottom:0}
+.entry p{white-space:pre-wrap;margin:6px 0 4px}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.stat{border:2.5px solid var(--ink);border-radius:14px;padding:12px;background:var(--panel)}
+.stat b{display:block;font-size:30px;line-height:1;font-weight:800}
+.stat span{font-size:13px;color:var(--mute)}
+svg text{font-family:inherit}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);vertical-align:-1px;margin-right:5px}
+
+table.plan{width:100%;border-collapse:collapse;font-size:14px}
+table.plan th{font-weight:600;color:var(--mute);text-align:center;padding:6px 2px}
+table.plan th:first-child,table.plan td:first-child{text-align:left}
+table.plan td{padding:9px 2px;text-align:center;border-top:1.5px dashed var(--line);font-weight:600}
+table.plan td:first-child{font-weight:800;padding-right:6px}
+table.plan td.act,table.plan th.act{background:var(--cheese-l)}
+
+#tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ink);padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:5}
+#tabs .in{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:0}
+#tabs button{background:none;border:0;color:#CFC9EA;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;cursor:pointer;border-radius:10px}
+#tabs button.on{color:var(--cheese)}
+#tabs svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#tabs :focus-visible{outline-color:var(--cheese)}
+#toast{position:fixed;top:calc(10px + env(safe-area-inset-top));left:10px;right:10px;max-width:460px;margin:0 auto;z-index:9;display:none}
+.rem{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1.5px dashed var(--line)}
+.rem:last-of-type{border-bottom:0}
+.rem label{flex:1;font-weight:600}
+.rem input[type=checkbox]{width:22px;height:22px;accent-color:var(--ink)}
+.rem input[type=time]{width:130px;padding:8px}
+.srow{padding:12px 0;border-bottom:1.5px dashed var(--line)}
+.srow:last-of-type{border-bottom:0}
+.srow .top2{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.srow small{display:block}
+.tiers{display:flex;gap:6px;margin-top:8px}
+.tiers .chip{padding:6px 14px;font-size:14px}
+.chip:disabled{cursor:default;opacity:.55}
+.chip.on:disabled{opacity:1}
+.lock{padding-top:24px}
+.err{color:var(--rose);font-weight:600;font-size:14px;margin-top:10px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<nav id="tabs" aria-label="Main"></nav>
+
+<script>
+let swReg=null;
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').then(r=>{swReg=r}).catch(()=>{}));navigator.serviceWorker.ready.then(r=>{swReg=r}).catch(()=>{})}
+
+/* ---------- storage (falls back to memory if the browser blocks it) ---------- */
+const KEY='quiet-maze-v1';
+let canSave=true;
+try{localStorage.setItem('__qm','1');localStorage.removeItem('__qm')}catch(e){canSave=false}
+const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}};
+const save=()=>{if(!canSave)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const fresh=()=>fix({profile:null,logs:{},urges:[],journal:[],body:{}});
+const fix=s=>{s.body=s.body||{};s.body.weights=Array.isArray(s.body.weights)?s.body.weights:[];s.body.days=s.body.days||{};s.body.targets={steps:8000,protein:160,calories:2100,...(s.body.targets||{})};s.remind={on:false,...(s.remind||{}),enabled:{morning:true,evening:true,night:false,...((s.remind||{}).enabled||{})},times:{morning:'08:00',evening:'20:00',night:'22:00',...((s.remind||{}).times||{})},last:(s.remind||{}).last||{}};const sc=s.scale||{};s.scale={committed:false,start:null,editAfter:null,lastJudged:null,money:'',...sc,mode:sc.mode||(sc.committed?'self':'partner'),partner:{name:'',phone:'',pub:'',...(sc.partner||{})},items:sc.items||[],custom:sc.custom||[],cats:{chores:true,awkward:true,money:true,effort:true,...(sc.cats||{})},pending:sc.pending||[],history:sc.history||{},manual:sc.manual||{},paid:sc.paid||[]};return s};
+let S=fix(load()||fresh());
+const P=new Proxy({},{get:(_,k)=>S.profile[k]});
+
+/* ---------- content ---------- */
+const CHEESE={
+  social:{name:'Social media & short videos',unit:'min',def:120,blurb:'Feeds, reels, shorts, endless scroll.'},
+  gaming:{name:'Gaming',unit:'min',def:60,blurb:'Console, PC and mobile games.'},
+  food:{name:'Junk food & sugar',unit:'servings',def:3,blurb:'Snacks, sweets, soda, takeaway.'},
+  adult:{name:'Adult content',unit:'times',def:1,blurb:'Porn and similar content.'}
+};
+const FACT=[0.85,0.7,0.55,0.4];
+const TRIGGERS=['Boredom','Stress','Loneliness','Tiredness','Procrastinating','Late at night','Notifications','Autopilot habit'];
+const TIMES=['Morning','Midday','Afternoon','Evening','Late night'];
+const REPS={
+  walk:{label:'Walk',task:'Take a 20-minute walk without earbuds.'},
+  read:{label:'Read',task:'Read 10 pages of a paper book.'},
+  move:{label:'Exercise',task:'Do 15 minutes of movement that raises your heart rate.'},
+  write:{label:'Journal',task:'Write three honest lines in the Journal tab.'},
+  friend:{label:'Call a friend',task:'Call or meet someone instead of messaging.'},
+  tidy:{label:'Cook or tidy',task:'Tidy one space or cook something simple.'},
+  breathe:{label:'Breathe',task:'Do 5 minutes of slow breathing.'},
+  make:{label:'Make something',task:'Spend 20 minutes making something by hand.'}
+};
+const TASKS={
+  social:['Mute every notification that is not from a person.','Move social apps off your home screen.','Charge your phone outside the bedroom tonight.','Delete one app you open on autopilot.','Wait 10 minutes after each scroll session before the next.','Unfollow 10 accounts that leave you drained.','Switch your screen to grayscale for the day.','Check social at two set times only.'],
+  gaming:['Pick a stop time before you start playing.','Play only after your first action step is done.','Uninstall one game you open when bored.','Replace one session with a walk or a stretch.','End each session at a natural break, not mid-round.','Tell one person your gaming limit for today.'],
+  food:['Put sugary snacks out of sight, or out of the house.','Drink a full glass of water before any snack.','Swap one sweet treat for fruit or nuts.','Wait 10 minutes before eating a craving snack.','Cook or assemble one simple real meal.','Eat one meal with no screen.'],
+  adult:['Install a content blocker on every device you own.','Keep devices out of the bathroom and bedroom today.','Avoid being alone with a screen late at night.','When an urge hits, stand up and change rooms.','Name your top trigger and plan one counter-move.','Go to bed at a set time tonight, phone across the room.']
+};
+const GENERAL=['Spend 10 minutes in silence with no input.','Do one boring task fully, with no music or podcast.','Spend your first hour awake screen-free.','Take a 15-minute walk with your phone in your pocket.','Write tomorrow\'s three priorities on paper.','Sit with boredom for 5 minutes. Notice where you feel it.','Wait 5 minutes before opening any app you reach for.'];
+const PROMPTS=[
+  'What cheese did I chase today, and what was I really hungry for?',
+  'What am I afraid will happen if I cut back?',
+  'What did I do in the gap where I would normally have scrolled?',
+  'If I weren\'t afraid, what would I do tomorrow?',
+  'Which old cheese am I still going back to check on?',
+  'What did boredom feel like in my body today?',
+  'What felt better than I expected without the extra stimulation?',
+  'Who do I want to be on day 30?'
+];
+const TIPS=[
+  'Urges rise, peak and fall. You only have to outlast the peak.',
+  'Put the phone in another room. Distance beats willpower.',
+  'Breathe in for 4, out for 6. Repeat ten times.',
+  'Name it: "I\'m bored, not hungry." Naming takes the edge off.',
+  'Give your hands a job. Stretch, wash dishes, tidy.',
+  'The pull is weaker now than when you started. Notice that.',
+  'Nearly there. You are teaching your brain that urges pass.'
+];
+
+/* ---------- art ---------- */
+const cheeseInner='<path d="M5 30 L38 11 Q44 8 44 15 V32 Z" fill="#F6BB1A" stroke="#2F2A55" stroke-width="2.5" stroke-linejoin="round"/><path d="M5 30 H44 V39 Q44 41 42 41 H7 Q5 41 5 39 Z" fill="#D8960A" stroke="#2F2A55" stroke-width="2.5" stroke-linejoin="round"/><circle cx="31" cy="21" r="2.6" fill="#FFE08A" stroke="#2F2A55" stroke-width="1.5"/><circle cx="22" cy="26" r="1.8" fill="#FFE08A" stroke="#2F2A55" stroke-width="1.5"/><circle cx="35" cy="35" r="2" fill="#FFE08A" stroke="#2F2A55" stroke-width="1.5"/>';
+const mouseInner='<path d="M9 21 C2 21 1 27 6 28" fill="none" stroke="#2F2A55" stroke-width="2" stroke-linecap="round"/><ellipse cx="20" cy="19" rx="12" ry="8" fill="#B9B4D0" stroke="#2F2A55" stroke-width="2.2"/><circle cx="26" cy="9" r="5" fill="#EFB5C6" stroke="#2F2A55" stroke-width="2.2"/><circle cx="33" cy="19" r="1.8" fill="#C94F72"/><circle cx="29" cy="16" r="1.3" fill="#2F2A55"/>';
+const cheeseSVG=w=>`<svg width="${w}" height="${w}" viewBox="0 0 48 48" aria-hidden="true">${cheeseInner}</svg>`;
+const mouseSVG=w=>`<svg width="${w}" height="${w*0.75}" viewBox="0 0 40 30" aria-hidden="true">${mouseInner}</svg>`;
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseKey=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const todayKey=()=>keyOf(new Date());
+const dayNum=k=>Math.round((parseKey(k)-parseKey(P.start))/864e5)+1;
+const dateForDay=n=>{const d=parseKey(P.start);d.setDate(d.getDate()+n-1);return keyOf(d)};
+const weekOf=n=>Math.min(3,Math.max(0,Math.floor((n-1)/7)));
+const unitLabel=(c,v)=>{const u=CHEESE[c].unit;if(u==='servings')return v===1?'serving':'servings';if(u==='times')return v===1?'time':'times';return u};
+const fmt=(c,v)=>`${v} ${unitLabel(c,v)}`;
+const mmss=s=>`${Math.floor(s/60)}:${pad(s%60)}`;
+function limitFor(c,wk){
+  const v=P.current[c]*FACT[Math.min(wk,3)];
+  return CHEESE[c].unit==='min'?Math.round(v/5)*5:Math.round(v);
+}
+const peek=k=>S.logs[k]||{usage:{},tasks:{},mood:0,urge:0};
+function L(k){if(!S.logs[k])S.logs[k]={usage:{},tasks:{},mood:0,urge:0};S.logs[k].touched=true;return S.logs[k]}
+function dayStatus(k){
+  const lg=S.logs[k];if(!lg||!lg.touched)return 'empty';
+  const wk=weekOf(dayNum(k));
+  return P.cheeses.some(c=>(lg.usage[c]||0)>limitFor(c,wk))?'nibbled':'kept';
+}
+function streak(){
+  const n=dayNum(todayKey());let s=0;
+  for(let d=Math.min(n,60);d>=1;d--){
+    const st=dayStatus(dateForDay(d));
+    if(st==='kept')s++;else if(d===n&&st==='empty')continue;else break;
+  }
+  return s;
+}
+function tasksFor(n){
+  const out=[{id:'g',text:GENERAL[(n-1)%GENERAL.length]}];
+  const cs=P.cheeses;
+  const picks=cs.length>1?[cs[(n-1)%cs.length],cs[n%cs.length]]:[cs[0]];
+  picks.forEach((c,i)=>{const pool=TASKS[c];out.push({id:c,text:pool[(n-1+i*2)%pool.length]})});
+  if(P.reps.length)out.push({id:'r',text:REPS[P.reps[(n-1)%P.reps.length]].task});
+  return out;
+}
+const joinList=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+
+/* ---------- state ---------- */
+let view='today';
+let ob={step:0,err:'',name:'',cheeses:{social:true,gaming:true,food:true,adult:true},amounts:{social:120,gaming:60,food:3,adult:1},triggers:[],times:[],reps:[],why:'',fear:''};
+let U={phase:'pick',cheese:null,intensity:3,trigger:null,start:0,dur:600,rep:null,result:null,finished:false};
+let J={pi:null,override:null};
+let timerId=null;
+
+/* ---------- onboarding ---------- */
+function planTable(activeWeek){
+  const keys=P&&S.profile?P.cheeses:Object.keys(ob.cheeses).filter(c=>ob.cheeses[c]);
+  const cur=c=>S.profile?P.current[c]:ob.amounts[c];
+  const lim=(c,w)=>{const v=cur(c)*FACT[w];return CHEESE[c].unit==='min'?Math.round(v/5)*5:Math.round(v)};
+  const val=(c,v)=>CHEESE[c].unit==='min'?v:v;
+  return `<table class="plan"><thead><tr><th></th><th>Now</th>${[0,1,2,3].map(w=>`<th class="${w===activeWeek?'act':''}">Wk ${w+1}</th>`).join('')}</tr></thead><tbody>${
+    keys.map(c=>`<tr><td>${esc(CHEESE[c].name.split(' & ')[0])}<br><small>${CHEESE[c].unit}</small></td><td>${val(c,cur(c))}</td>${[0,1,2,3].map(w=>`<td class="${w===activeWeek?'act':''}">${val(c,lim(c,w))}</td>`).join('')}</tr>`).join('')
+  }</tbody></table>`;
+}
+function onboardHTML(){
+  const s=ob.step,total=8;
+  let h='<div class="ob">';
+  if(s===0){
+    return `<div style="padding-top:28px">${cheeseSVG(76)}<h1 style="margin-top:14px;font-size:38px">The Quiet Maze</h1>
+    <p style="font-size:18px">A gentle dopamine detox. The cheese you keep chasing has moved onto your phone. You can't stop wanting it, but you can choose how much of your day it gets.</p>
+    <p class="sub">Two minutes of questions, then a 30-day trail with small daily limits. Your answers stay on this device.</p>
+    <button class="btn block" data-a="ob-start">Begin</button><button class="btn ghost block" style="margin-top:12px" data-a="p-open">I'm someone's accountability partner</button></div>`;
+  }
+  h+=`<div class="dots">${Array.from({length:total},(_,i)=>`<i class="${i+1<s?'on':i+1===s?'cur':''}"></i>`).join('')}</div>`;
+  if(s===1){
+    h+=`<h1>What should we call you?</h1><p class="sub">A first name or nickname is fine.</p><input type="text" id="obName" value="${esc(ob.name)}" placeholder="Your name" autocomplete="given-name" maxlength="30">`;
+  }else if(s===2){
+    h+=`<h1>Which cheese do you chase?</h1><p class="sub">Cheese is whatever you run to for a quick hit. Pick every one you want to cut back.</p>`+
+    Object.keys(CHEESE).map(c=>`<button class="pick ${ob.cheeses[c]?'on':''}" data-a="ob-cheese" data-c="${c}" aria-pressed="${!!ob.cheeses[c]}"><b>${CHEESE[c].name}</b><span>${CHEESE[c].blurb}</span></button>`).join('');
+  }else if(s===3){
+    h+=`<h1>How much on a typical day?</h1><p class="sub">A rough guess is fine. Honest beats exact.</p><div class="card flat">`+
+    Object.keys(CHEESE).filter(c=>ob.cheeses[c]).map(c=>{
+      const m=CHEESE[c].unit==='min',st=m?10:1;
+      return `<div class="amt"><div><b>${esc(CHEESE[c].name.split(' & ')[0])}</b></div><div class="stepper"><button class="round" data-a="ob-amt" data-c="${c}" data-d="${-st}" aria-label="Less">−</button><b>${ob.amounts[c]} ${unitLabel(c,ob.amounts[c])}</b><button class="round" data-a="ob-amt" data-c="${c}" data-d="${st}" aria-label="More">+</button></div></div>`}).join('')+`</div>`;
+  }else if(s===4){
+    h+=`<h1>What sends you to the cheese?</h1><p class="sub">Pick the triggers you notice most.</p><div class="chips">${TRIGGERS.map(t=>`<button class="chip ${ob.triggers.includes(t)?'on':''}" data-a="ob-chip" data-l="triggers" data-v="${t}" aria-pressed="${ob.triggers.includes(t)}">${t}</button>`).join('')}</div>`;
+  }else if(s===5){
+    h+=`<h1>When is the pull strongest?</h1><p class="sub">We'll flag these hours so you can plan for them.</p><div class="chips">${TIMES.map(t=>`<button class="chip ${ob.times.includes(t)?'on':''}" data-a="ob-chip" data-l="times" data-v="${t}" aria-pressed="${ob.times.includes(t)}">${t}</button>`).join('')}</div>`;
+  }else if(s===6){
+    h+=`<h1>What could you do instead?</h1><p class="sub">Pick things you'd actually enjoy. We'll weave them into your daily steps.</p><div class="chips">${Object.keys(REPS).map(r=>`<button class="chip ${ob.reps.includes(r)?'on':''}" data-a="ob-chip" data-l="reps" data-v="${r}" aria-pressed="${ob.reps.includes(r)}">${REPS[r].label}</button>`).join('')}</div>`;
+  }else if(s===7){
+    h+=`<h1>Your why</h1><p class="sub">Written now, shown back to you on hard days.</p>
+    <h3 style="margin-top:0">Why do you want less stimulation?</h3><textarea id="obWhy" placeholder="More focus, better sleep, feeling present...">${esc(ob.why)}</textarea>
+    <h3>What worries you about changing?</h3><textarea id="obFear" placeholder="Being bored, missing out, failing again...">${esc(ob.fear)}</textarea>`;
+  }else if(s===8){
+    h+=`<h1>Your gentle plan</h1><p class="sub">Each week your limits shrink a little. No cold turkey. Go over and you simply log it and keep walking.</p><div class="card flat">${planTable(0)}</div>`;
+  }
+  if(ob.err)h+=`<div class="err" role="alert">${ob.err}</div>`;
+  h+=`<div class="nav"><button class="btn ghost" data-a="ob-back">Back</button><button class="btn" data-a="ob-next">${s===total?'Start the trail':'Next'}</button></div></div>`;
+  return h;
+}
+function finishOnboarding(){
+  const keys=Object.keys(CHEESE).filter(c=>ob.cheeses[c]);
+  const current={};keys.forEach(c=>current[c]=ob.amounts[c]);
+  S.profile={name:ob.name.trim()||'friend',cheeses:keys,current,triggers:ob.triggers,times:ob.times,reps:ob.reps,why:ob.why.trim(),fear:ob.fear.trim(),start:todayKey()};
+  view='today';
+}
+
+/* ---------- Today ---------- */
+function todayHTML(){
+  const k=todayKey(),n=dayNum(k),wk=weekOf(n),lg=peek(k);
+  const hr=new Date().getHours();
+  const hello=hr<5?'Still up':hr<12?'Good morning':hr<18?'Good afternoon':'Good evening';
+  const pct=n>=30?100:Math.max(0,(n-1)/29*100);
+  const tasks=tasksFor(n);
+  const doneCount=tasks.filter(t=>lg.tasks[t.id]).length;
+  const anyOver=P.cheeses.some(c=>(lg.usage[c]||0)>limitFor(c,wk));
+  let msg;
+  if(anyOver)msg='You went over a limit today. That is information, not failure. Check the Urge tab to see what pulled you in.';
+  else if(doneCount===tasks.length)msg='Every step is done and you are inside your limits. That is how the maze gets quiet.';
+  else msg='Small steps beat big resolutions. Pick one step and start with it.';
+  let h=`<div class="top">${cheeseSVG(30)}<span>The Quiet Maze</span></div>
+  <div class="hello"><h1>${hello}, ${esc(P.name)}.</h1><p class="sub" style="margin:0">${n>30?`Day ${n}. You reached the cheese. Keep your limits going.`:`Day ${n} of 30. Week ${wk+1} limits are active.`}</p></div>
+  <div class="track" role="img" aria-label="Progress through the maze"><div class="bar"><div class="fill" style="width:${pct}%"></div></div><div class="mouse" style="left:${pct}%">${mouseSVG(34)}</div><div class="end">${cheeseSVG(34)}</div></div>`;
+  if(P.why||P.times.length){
+    h+=`<div class="why">${P.why?`<q>“${esc(P.why)}”</q>`:''}${P.times.length?`<small>Your pull is strongest in the ${esc(joinList(P.times.map(t=>t.toLowerCase())))}. Plan a step for then.</small>`:''}</div>`;
+  }
+  h+=`<div class="card"><h2>Today's limits</h2><p class="small" style="margin-bottom:6px">Log as you go. Staying at or under the line counts as a kept day.</p>`;
+  h+=P.cheeses.map(c=>{
+    const lim=limitFor(c,wk),used=lg.usage[c]||0;
+    const pc=lim===0?(used>0?100:0):Math.min(100,used/lim*100);
+    const st=used>lim?'over':(lim>0&&used/lim>=.8?'near':'ok');
+    const m=used>lim?`Over by ${fmt(c,used-lim)}. Note what pulled you in.`:(lim===0&&used===0?'Free day so far. Keep it that way.':`${fmt(c,lim-used)} left`);
+    const mins=CHEESE[c].unit==='min';
+    const b=(d,t)=>`<button class="btn ghost sm" data-a="use" data-c="${c}" data-d="${d}">${t}</button>`;
+    return `<div class="limit ${st}"><div class="row sp"><b>${esc(CHEESE[c].name)}</b><span><b>${used}</b> / ${lim} ${mins?'min':''}</span></div>
+    <div class="meter"><i style="width:${pc}%"></i></div><div class="msg">${m}</div>
+    <div class="btns">${mins?b(-5,'−5')+b(5,'+5')+b(15,'+15'):b(-1,'−1')+b(1,'+1')}</div></div>`}).join('');
+  h+=`</div>
+  <div class="card"><h2>Scurry: today's steps</h2><p class="small" style="margin-bottom:4px">Move now. Don't wait for the old cheese to come back.</p>${
+    tasks.map(t=>`<button class="task ${lg.tasks[t.id]?'done':''}" data-a="task" data-id="${t.id}" aria-pressed="${!!lg.tasks[t.id]}"><span class="box">${lg.tasks[t.id]?'✓':''}</span><span>${esc(t.text)}</span></button>`).join('')
+  }<p class="small" style="margin:10px 0 0">${doneCount} of ${tasks.length} done</p></div>
+  <div class="card"><h2>Sniff: how's the air today?</h2>
+    <h3 style="margin-top:10px">Mood</h3><div class="scale">${['Low','Meh','Okay','Good','Great'].map((t,i)=>`<button class="sc ${lg.mood===i+1?'on':''}" data-a="mood" data-v="${i+1}">${t}</button>`).join('')}</div>
+    <h3>How strong were the pulls?</h3><div class="scale">${['None','Faint','Medium','Strong','Intense'].map((t,i)=>`<button class="sc ${lg.urge===i+1?'on':''}" data-a="urgelvl" data-v="${i+1}">${t}</button>`).join('')}</div></div>
+  ${scaleNote()}<div class="note">${msg}</div>`;
+  return h;
+}
+
+/* ---------- Urge ---------- */
+const CIRC=2*Math.PI*70;
+function urgeHTML(){
+  let h='';
+  if(U.phase==='pick'){
+    const sel=U.cheese||P.cheeses[0];
+    h+=`<h1>An urge showed up</h1><p class="sub">Good. Noticing it is the first step. Tell us what it wants, then wait it out for ten minutes.</p>
+    <h3 style="margin-top:0">What is it asking for?</h3><div class="chips">${P.cheeses.map(c=>`<button class="chip ${sel===c?'on':''}" data-a="u-cheese" data-c="${c}">${esc(CHEESE[c].name.split(' & ')[0])}</button>`).join('')}</div>
+    <h3>How strong is it? <span id="intLbl">${['','Faint','Mild','Medium','Strong','Intense'][U.intensity]}</span></h3><input type="range" id="intens" min="1" max="5" value="${U.intensity}" aria-label="Urge strength">
+    <h3>What set it off?</h3><div class="chips">${[...P.triggers,'Not sure'].map(t=>`<button class="chip ${U.trigger===t?'on':''}" data-a="u-trig" data-v="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+    <div class="nav"><button class="btn block" data-a="u-start">Start the 10-minute pause</button></div>`;
+  }else if(U.phase==='run'){
+    h+=`<h1>${U.finished?'The peak has passed':'Ride it out'}</h1><p class="sub">${U.finished?'Check in with yourself. How did it go?':'You do not have to act on it. Just stay in the maze a little longer.'}</p>
+    <div class="ringwrap"><svg width="180" height="180" viewBox="0 0 180 180" role="img" aria-label="Countdown"><circle cx="90" cy="90" r="70" fill="none" stroke="#D3CCE6" stroke-width="14"/><circle id="ring" cx="90" cy="90" r="70" fill="none" stroke="#2F2A55" stroke-width="14" stroke-linecap="round" stroke-dasharray="${CIRC}" stroke-dashoffset="0" transform="rotate(-90 90 90)"/></svg><div class="t" id="tm">10:00</div></div>
+    <div class="tip" id="tip">${TIPS[0]}</div>
+    ${P.reps.length?`<h3>Do one thing instead</h3><div class="chips">${P.reps.map(r=>`<button class="chip ${U.rep===r?'on':''}" data-a="u-rep" data-v="${r}">${REPS[r].label}</button>`).join('')}</div>`:''}
+    <div class="nav"><button class="btn ghost" data-a="u-end" data-r="gave">I gave in</button><button class="btn" data-a="u-end" data-r="rode">I rode it out</button></div>`;
+  }else{
+    const rode=U.result==='rode';
+    h+=`<h1>${rode?'You outlasted it':'You noticed it. That counts.'}</h1><p class="sub">${rode?'That is one more time your brain learned an urge can pass without being fed.':'Looking at what happened is how the next one gets easier. What was the trigger, the place and the time?'}</p>
+    <div class="note">${rode?'Rode out urges are the real progress here. They show up on your Trail.':'Giving in is not the end of the trail. Log it, learn from it, and take your next step.'}</div>
+    <div class="nav"><button class="btn ghost" data-a="u-journal">Write about it</button><button class="btn" data-a="u-new">Back to Today</button></div>`;
+  }
+  if(U.phase==='pick'){
+    const rec=S.urges.slice(0,6),rode=S.urges.filter(u=>u.outcome==='rode').length;
+    h+=`<div class="card" style="margin-top:26px"><h2>Recent urges</h2>${S.urges.length?`<p class="small">Rode out ${rode} of ${S.urges.length}</p>`:'<p class="small">None logged yet. When one shows up, come here first.</p>'}${
+      rec.map(u=>`<div class="hist"><div><b>${esc(CHEESE[u.cheese].name.split(' & ')[0])}</b> <small>${esc(u.trigger||'')}</small><br><small>${new Date(u.ts).toLocaleDateString(undefined,{month:'short',day:'numeric'})} at ${new Date(u.ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}</small></div><span class="tag ${u.outcome==='rode'?'ok':'no'}">${u.outcome==='rode'?'Rode out':'Gave in'}</span></div>`).join('')}</div>`;
+  }
+  return h;
+}
+function tick(){
+  if(U.phase!=='run'){clearInterval(timerId);return}
+  const el=Math.floor((Date.now()-U.start)/1000),left=Math.max(0,U.dur-el);
+  const t=$('#tm'),r=$('#ring'),tip=$('#tip');
+  if(t)t.textContent=left>0?mmss(left):'Done';
+  if(r)r.setAttribute('stroke-dashoffset',String(CIRC*Math.min(1,el/U.dur)));
+  if(tip)tip.textContent=TIPS[Math.min(TIPS.length-1,Math.floor(el/90))];
+  if(left===0&&!U.finished){U.finished=true;clearInterval(timerId);if(view==='urge')render()}
+}
+
+/* ---------- Journal ---------- */
+function journalHTML(){
+  if(J.pi===null)J.pi=dayNum(todayKey())%PROMPTS.length;
+  const prompt=J.override||PROMPTS[J.pi];
+  return `<h1>Writing on the wall</h1><p class="sub">In the maze, the characters left notes on the walls for themselves. This is yours.</p>
+  <div class="card"><h2 style="font-size:17px">${esc(prompt)}</h2><textarea id="jText" placeholder="Write freely. No one else reads this." aria-label="Journal entry"></textarea>
+  <div class="nav" style="margin-top:12px"><button class="btn ghost" data-a="j-next">Another prompt</button><button class="btn" data-a="j-save">Save entry</button></div></div>
+  <h2>Past entries</h2>${S.journal.length?'':'<p class="small">Nothing yet. Your first entry can be three honest lines.</p>'}
+  <div class="card flat" ${S.journal.length?'':'hidden'}>${S.journal.map(e=>`<div class="entry"><div class="row sp"><small>${new Date(e.ts).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})}</small><button class="btn ghost sm" data-a="j-del" data-ts="${e.ts}" aria-label="Delete entry">Delete</button></div><b>${esc(e.prompt)}</b><p>${esc(e.text)}</p></div>`).join('')}</div>`;
+}
+
+/* ---------- Trail ---------- */
+function trailHTML(){
+  const tn=dayNum(todayKey()),n=Math.min(tn,30);
+  const pos=i=>{const row=Math.floor(i/6),c=i%6,col=row%2===0?c:5-c;return{x:36+col*58,y:40+row*66}};
+  const pts=Array.from({length:30},(_,i)=>pos(i));
+  const line=pts.map(p=>`${p.x},${p.y}`).join(' ');
+  const prog=pts.slice(0,n).map(p=>`${p.x},${p.y}`).join(' ');
+  let g='';
+  pts.forEach((p,i)=>{
+    const d=i+1;
+    if(d===30){g+=`<svg x="${p.x-22}" y="${p.y-23}" width="44" height="44" viewBox="0 0 48 48">${cheeseInner}</svg>`;return}
+    let fill='#FBFAFE',stroke='#D3CCE6',dash='',r=14,sw=2.5;
+    if(d<tn){const st=dayStatus(dateForDay(d));
+      if(st==='kept'){fill='#F6BB1A';stroke='#2F2A55'}
+      else if(st==='nibbled'){fill='#F1B8C8';stroke='#2F2A55'}
+      else{stroke='#2F2A55';dash='3 3'}}
+    else if(d===tn){fill='#F6BB1A';stroke='#2F2A55';r=17;sw=3.5}
+    g+=`<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" ${dash?`stroke-dasharray="${dash}"`:''}/><text x="${p.x}" y="${p.y}" dy=".35em" text-anchor="middle" font-size="12" font-weight="800" fill="#2F2A55">${d}</text>`;
+  });
+  const mp=pts[n-1];
+  const mouse=`<svg x="${mp.x-17}" y="${mp.y-42}" width="34" height="26" viewBox="0 0 40 30">${mouseInner}</svg>`;
+  // stats
+  let kept=0;for(let d=1;d<=Math.min(tn,30);d++)if(dayStatus(dateForDay(d))==='kept')kept++;
+  const rode=S.urges.filter(u=>u.outcome==='rode').length;
+  let steps=0;Object.values(S.logs).forEach(l=>steps+=Object.values(l.tasks||{}).filter(Boolean).length);
+  const tcount={};S.urges.forEach(u=>{if(u.trigger)tcount[u.trigger]=(tcount[u.trigger]||0)+1});
+  const top=Object.entries(tcount).sort((a,b)=>b[1]-a[1])[0];
+  const moods=Object.keys(S.logs).sort().slice(-7).map(k=>S.logs[k].mood).filter(Boolean);
+  const avg=moods.length?(moods.reduce((a,b)=>a+b,0)/moods.length).toFixed(1):null;
+  return `<h1>Your trail</h1><p class="sub">${tn>30?'You reached the cheese. The trail is yours to keep walking.':`${30-Math.min(tn,30)} days to the cheese.`}</p>
+  <div class="card"><svg viewBox="0 0 362 340" width="100%" role="img" aria-label="30-day trail, currently on day ${n}">
+    <polyline points="${line}" fill="none" stroke="#2F2A55" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
+    <polyline points="${line}" fill="none" stroke="#EEEAF6" stroke-width="24" stroke-linejoin="round" stroke-linecap="round"/>
+    <polyline points="${prog}" fill="none" stroke="#FFE08A" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+    ${g}${mouse}</svg>
+    <div class="legend"><span><i style="background:#F6BB1A"></i>Kept</span><span><i style="background:#F1B8C8"></i>Over a limit</span><span><i style="background:#FBFAFE;border-style:dashed"></i>No log</span></div></div>
+  <div class="stats"><div class="stat"><b>${streak()}</b><span>day streak</span></div><div class="stat"><b>${kept}</b><span>days kept</span></div><div class="stat"><b>${rode}/${S.urges.length}</b><span>urges ridden out</span></div><div class="stat"><b>${steps}</b><span>steps completed</span></div></div>
+  <div class="card"><h2>What your maze shows</h2>
+    <p>${top?`Your most common trigger is <b>${esc(top[0])}</b> (${top[1]} ${top[1]===1?'urge':'urges'}).`:'Log urges to see which triggers come up most.'}</p>
+    <p style="margin:0">${avg?`Average mood over your last ${moods.length} check-ins: <b>${avg}</b> out of 5.`:'Check in on the Today tab to track your mood.'}</p></div>
+  <div class="card"><h2>Weekly limits</h2><p class="small">Current week is highlighted.</p>${planTable(weekOf(tn))}</div>
+  ${remindCard()}
+  <div class="card flat"><h2>Your data</h2>
+    <p class="small">${canSave?'Auto-saved as JSON on this device.':'Your browser is blocking storage here, so progress will not auto-save. Export a JSON backup, or open the file directly in your browser.'} Import also accepts a backup from your old Fat-loss Tracker.${locked()?' Start over and full-backup import are locked while your Scale commitment is active.':''}</p>
+    <div class="btns"><button class="btn ghost sm" data-a="export">Export JSON</button><button class="btn ghost sm" data-a="import">Import JSON</button><button class="btn ghost sm" data-a="reset" ${locked()?'disabled':''}>Start over</button></div>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+    <div id="dataMsg" class="small" role="status" style="margin-top:8px"></div></div>`;
+}
+
+/* ---------- Body ---------- */
+const BODY_HABITS=[['steps','Steps goal'],['train','Movement or training'],['sleep','Sleep'],['protein','Protein target']];
+function spark(ws){
+  const a=ws.slice(-12),W=300,Hh=70,p=8;
+  const vs=a.map(x=>x.weight),mn=Math.min(...vs),mx=Math.max(...vs),rg=(mx-mn)||1;
+  const pts=a.map((x,i)=>[p+i*(W-2*p)/(a.length-1),p+(1-(x.weight-mn)/rg)*(Hh-2*p)]);
+  return `<svg viewBox="0 0 ${W} ${Hh}" width="100%" role="img" aria-label="Weight trend"><polyline points="${pts.map(q=>q.join(',')).join(' ')}" fill="none" stroke="#2F2A55" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>${pts.map(q=>`<circle cx="${q[0]}" cy="${q[1]}" r="4.5" fill="#F6BB1A" stroke="#2F2A55" stroke-width="2"/>`).join('')}</svg>`;
+}
+function bodyHTML(){
+  const B=S.body,t=B.targets,k=todayKey(),rec=B.days[k]||{};
+  const desc={steps:`Goal: ${Number(t.steps).toLocaleString()} steps`,train:'A workout, or planned easy movement',sleep:'Aim for 7–9 hours when possible',protein:`Goal: ${t.protein} g`};
+  const done=BODY_HABITS.filter(h=>rec[h[0]]).length;
+  let wk=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const r=B.days[keyOf(d)]||{};wk+=BODY_HABITS.filter(h=>r[h[0]]).length}
+  const ws=[...B.weights].sort((a,b)=>a.date.localeCompare(b.date));
+  const first=ws[0],last=ws[ws.length-1];
+  const chg=ws.length>1?last.weight-first.weight:null;
+  const lw=[...ws].reverse().find(w=>w.waist);
+  return `<h1>Body</h1><p class="sub">Movement, sleep and food are the natural cheese. Track the basics, not every number.</p>
+  <div class="stats"><div class="stat"><b>${last?Number(last.weight).toFixed(1):'—'}</b><span>kg, latest weigh-in</span></div><div class="stat"><b>${chg===null?'—':(chg>0?'+':'')+chg.toFixed(1)}</b><span>kg since first weigh-in</span></div><div class="stat"><b>${wk}/28</b><span>basics, last 7 days</span></div><div class="stat"><b>${lw?Number(lw.waist).toFixed(1):'—'}</b><span>cm waist, latest</span></div></div>
+  <div class="card"><h2>Today's body basics</h2><p class="small" style="margin-bottom:4px">${done} of ${BODY_HABITS.length} done</p>${
+    BODY_HABITS.map(h=>`<button class="task ${rec[h[0]]?'done':''}" data-a="bhabit" data-id="${h[0]}" aria-pressed="${!!rec[h[0]]}"><span class="box">${rec[h[0]]?'✓':''}</span><span><b>${h[1]}</b><br><small>${desc[h[0]]}</small></span></button>`).join('')}</div>
+  <div class="card"><h2>Weigh-in</h2><p class="small">Once a week is plenty, same time and conditions. Daily readings swing with water and food, and checking them often can pull you back into scorekeeping.</p>
+    <div class="two"><div class="fld"><label for="wIn">Weight (kg)</label><input id="wIn" type="number" min="30" max="300" step=".1" inputmode="decimal" placeholder="e.g. 81.6"></div><div class="fld"><label for="waIn">Waist (cm, optional)</label><input id="waIn" type="number" min="30" max="250" step=".1" inputmode="decimal" placeholder="e.g. 91"></div></div>
+    <div class="nav" style="margin-top:12px"><button class="btn block" data-a="b-weight">Save measurement</button></div>
+    ${ws.length>1?`<div style="margin-top:14px">${spark(ws)}</div>`:''}
+    ${ws.length?`<div style="margin-top:8px">${[...ws].reverse().slice(0,8).map(w=>`<div class="hist"><div><b>${Number(w.weight).toFixed(1)} kg</b>${w.waist?` <small>· ${Number(w.waist).toFixed(1)} cm waist</small>`:''}<br><small>${esc(w.date)}</small></div><button class="btn ghost sm" data-a="b-delw" data-date="${esc(w.date)}" aria-label="Delete weigh-in">Delete</button></div>`).join('')}<div class="btns"><button class="btn ghost sm" data-a="b-csv">Export weights CSV</button></div></div>`:'<p class="small" style="margin:12px 0 0">No weigh-ins yet.</p>'}
+    <div id="bMsg" class="small" role="status" style="margin-top:8px"></div></div>
+  <div class="card"><h2>Your targets</h2><p class="small">Starting estimates you can edit. Review after 2–3 weeks, and don't change them based on one weigh-in.</p>
+    <div class="two"><div class="fld"><label for="tSteps">Daily steps</label><input id="tSteps" type="number" min="1000" max="30000" step="500" value="${t.steps}"></div><div class="fld"><label for="tProt">Protein (g)</label><input id="tProt" type="number" min="50" max="300" step="5" value="${t.protein}"></div></div>
+    <div class="fld" style="margin-top:10px"><label for="tCal">Calories per day (estimate)</label><input id="tCal" type="number" min="1200" max="5000" step="50" value="${t.calories}"></div>
+    <div class="nav" style="margin-top:12px"><button class="btn block" data-a="b-targets">Save targets</button></div></div>
+  <details class="card"><summary>12-week roadmap</summary>
+    <p><b>Weeks 1–2: baseline.</b> Start around 2,100 kcal, track portions and oil, walk 7,000–9,000 steps, and do two full-body workouts a week.</p>
+    <p><b>Weeks 3–6: momentum.</b> Keep protein steady. Move to three strength sessions only if recovery and schedule allow.</p>
+    <p><b>Weeks 7–10: review.</b> If your average weight hasn't dropped for 2–3 weeks, check tracking accuracy and activity before considering a small 100–200 kcal change.</p>
+    <p><b>Weeks 11–12: consolidate.</b> Keep the routine steady, compare waist and photos, and skip crash dieting to force a deadline.</p></details>
+  <details class="card"><summary>Workouts A and B</summary>
+    <p><b>Workout A, full body</b></p><ul><li>Squat or leg press, 3 × 8–12</li><li>Bench press, 3 × 8–12</li><li>Lat pulldown, 3 × 8–12</li><li>Romanian deadlift, 2 × 8–12</li><li>Plank, 3 sets</li></ul>
+    <p><b>Workout B, full body</b></p><ul><li>Leg press or split squat, 3 × 8–12</li><li>Seated cable row, 3 × 8–12</li><li>Incline dumbbell press, 3 × 8–12</li><li>Leg curl, 3 × 10–15</li><li>Shoulder press, 2 × 8–12</li></ul>
+    <p class="small">Use controlled form and finish most sets with 2–3 reps left in the tank.</p></details>
+  <details class="card"><summary>Meal template</summary>
+    <p><b>Breakfast, ~450 kcal.</b> 50 g oats, 200 g plain high-protein yogurt, 2 eggs, 1 small banana.</p>
+    <p><b>Lunch, ~600 kcal.</b> 150 g cooked chicken breast, 180 g cooked rice, vegetables, measured oil.</p>
+    <p><b>Snack, ~300 kcal.</b> Whey protein, an apple, a small portion of almonds.</p>
+    <p><b>Dinner, ~700–750 kcal.</b> Fish or lean chicken, 2 medium rotis, dal or vegetables, measured oil.</p>
+    <p class="small">Calories are estimates. This is a trend tracker, not a medical device.</p></details>`;
+}
+function bmsg(t){const m=$('#bMsg');if(m)m.textContent=t}
+function dl(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+
+/* ---------- Scale (weigh-in + tolls) ---------- */
+const TW={must:5,should:3,nice:1};
+const TL={must:'Must',should:'Should',nice:'Nice'};
+const CATL={chores:'Chores',awkward:'Awkward tasks',money:'Money',effort:'Effort'};
+const TOLL_POOL=[
+  {cat:'chores',text:'Deep-clean the bathroom sink, mirror and floor.'},
+  {cat:'chores',text:'Wash a full load of laundry, then fold it and put it away.'},
+  {cat:'chores',text:'Declutter one drawer or shelf and bag everything you do not need.'},
+  {cat:'chores',text:'Wash every dish and wipe down the kitchen counters and stove.'},
+  {cat:'awkward',text:'Call someone you have been avoiding and talk for at least 5 minutes.'},
+  {cat:'awkward',text:'Send the apology or honest message you have been putting off.'},
+  {cat:'awkward',text:'Send the email you have been dreading.'},
+  {cat:'awkward',text:'Tell a friend you missed a Must and ask them to check on you tomorrow.'},
+  {cat:'money',text:null},
+  {cat:'effort',text:'Do 30 minutes of hard exercise.'},
+  {cat:'effort',text:'Do 100 squats and 50 push-ups, in as many sets as you need.'},
+  {cat:'effort',text:'Walk 5 km without earbuds.'}
+];
+const nextDay=k=>{const d=parseKey(k);d.setDate(d.getDate()+1);return keyOf(d)};
+const prevDay=k=>{const d=parseKey(k);d.setDate(d.getDate()-1);return keyOf(d)};
+const frozen=()=>{const c=S.scale;return !!c.committed&&todayKey()<c.editAfter};
+const locked=()=>{const c=S.scale;return !!c.committed&&(c.pending.length>0||todayKey()<c.editAfter)};
+function seedItems(){
+  const SC=S.scale;if(SC.items.length||!S.profile)return;
+  P.cheeses.forEach(c=>SC.items.push({id:'lim_'+c,type:'limit',c,name:`Stay within your ${CHEESE[c].name.split(' & ')[0].toLowerCase()} limit`,tier:(c==='social'||c==='adult')?'must':'should'}));
+  SC.items.push({id:'steps',type:'steps',name:"Finish today's steps",tier:'must'});
+  SC.items.push({id:'body',type:'body',name:'Do 3 of 4 body basics',tier:'nice'});
+  SC.items.push({id:'journal',type:'journal',name:'Write one journal entry',tier:'nice'});
+}
+function itemDone(it,k){
+  const lg=S.logs[k],touched=!!(lg&&lg.touched);
+  if(it.type==='limit'){if(!touched)return false;return (lg.usage[it.c]||0)<=limitFor(it.c,weekOf(dayNum(k)))}
+  if(it.type==='steps'){if(!touched)return false;return tasksFor(dayNum(k)).every(t=>lg.tasks&&lg.tasks[t.id])}
+  if(it.type==='body'){const r=S.body.days[k]||{};return BODY_HABITS.filter(h=>r[h[0]]).length>=3}
+  if(it.type==='journal')return S.journal.some(e=>keyOf(new Date(e.ts))===k);
+  return !!(S.scale.manual[k]&&S.scale.manual[k][it.id]);
+}
+function tollPool(){
+  const SC=S.scale;
+  const a=TOLL_POOL.filter(t=>SC.cats[t.cat]).map(t=>({cat:t.cat,text:t.cat==='money'?`Donate ${SC.money||'a set amount'} to a charity of your choice.`:t.text}));
+  SC.custom.forEach(c=>a.push({cat:'custom',text:c.text}));
+  return a;
+}
+function makeToll(day,failed){
+  if(S.scale.mode==='partner')return {id:Date.now()+'-'+Math.random().toString(36).slice(2,6),day,mode:'partner',ch:genChallenge(),failed};
+  const pool=tollPool(),last=S.scale.paid.length?S.scale.paid[S.scale.paid.length-1].text:'';
+  const src=pool.filter(t=>t.text!==last),opts=src.length?src:pool;
+  const pick=opts[Math.floor(Math.random()*opts.length)];
+  return {id:Date.now()+'-'+Math.random().toString(36).slice(2,6),day,cat:pick.cat,text:pick.text,failed};
+}
+function judge(){
+  const SC=S.scale;if(!SC.committed||!SC.lastJudged)return;
+  const today=todayKey();let d=nextDay(SC.lastJudged),added=0,changed=false;
+  while(d<today){
+    const failed=SC.items.filter(i=>i.tier==='must'&&!itemDone(i,d));
+    let earned=0,possible=0;SC.items.forEach(i=>{possible+=TW[i.tier];if(itemDone(i,d))earned+=TW[i.tier]});
+    SC.history[d]={ok:!failed.length,failed:failed.map(i=>i.name),earned,possible};
+    if(failed.length&&added<3){SC.pending.push(makeToll(d,failed.map(i=>i.name)));added++}
+    SC.lastJudged=d;d=nextDay(d);changed=true;
+  }
+  if(changed)save();
+}
+function scaleNote(){
+  const SC=S.scale;if(!SC.committed)return '';
+  const left=SC.items.filter(i=>i.tier==='must'&&!itemDone(i,todayKey()));
+  return left.length?`<div class="note"><b>Musts still open:</b> ${esc(left.map(i=>i.name).join(', '))}. Miss one and the app locks tomorrow until you pay a toll.</div>`:'<div class="note">Every Must is on track today.</div>';
+}
+function scaleSVG(earned,possible){
+  const r=possible?earned/possible:0,ang=(1-r)*18,rad=ang*Math.PI/180,cx=150,cy=40,L=90;
+  const lx=cx-L*Math.cos(rad),ly=cy-L*Math.sin(rad),rx=cx+L*Math.cos(rad),ry=cy+L*Math.sin(rad);
+  const pan=(x,y,fill,txt)=>`<line x1="${x}" y1="${y}" x2="${x-26}" y2="${y+50}" stroke="#2F2A55" stroke-width="2.5"/><line x1="${x}" y1="${y}" x2="${x+26}" y2="${y+50}" stroke="#2F2A55" stroke-width="2.5"/><path d="M${x-30} ${y+50} Q${x} ${y+78} ${x+30} ${y+50} Z" fill="${fill}" stroke="#2F2A55" stroke-width="2.5" stroke-linejoin="round"/><text x="${x}" y="${y+98}" text-anchor="middle" font-size="14" font-weight="800" fill="#2F2A55">${txt}</text>`;
+  return `<svg viewBox="0 0 300 190" width="100%" role="img" aria-label="Scale: ${earned} points done, ${possible-earned} points owed"><line x1="150" y1="40" x2="150" y2="172" stroke="#2F2A55" stroke-width="6" stroke-linecap="round"/><line x1="112" y1="172" x2="188" y2="172" stroke="#2F2A55" stroke-width="8" stroke-linecap="round"/>${pan(lx,ly,'#F6BB1A','Done '+earned)}${pan(rx,ry,'#F1B8C8','Owed '+(possible-earned))}<line x1="${lx}" y1="${ly}" x2="${rx}" y2="${ry}" stroke="#2F2A55" stroke-width="7" stroke-linecap="round"/><circle cx="150" cy="40" r="8" fill="#F6BB1A" stroke="#2F2A55" stroke-width="3"/></svg>`;
+}
+function tollsCard(){
+  const SC=S.scale,fr=frozen();
+  return `<div class="card"><h2>Your tolls</h2><p class="small">Things you dislike, chosen while calm. One is picked at random when you miss a Must.</p>
+    <div class="chips">${Object.keys(CATL).map(c=>`<button class="chip ${SC.cats[c]?'on':''}" data-a="sc-cat" data-c="${c}" aria-pressed="${!!SC.cats[c]}">${CATL[c]}</button>`).join('')}</div>
+    ${SC.cats.money?`<div class="fld" style="margin-top:12px"><label for="scMoney">Donation amount (with currency)</label><input type="text" id="scMoney" value="${esc(SC.money)}" placeholder="e.g. $10" maxlength="20"></div>`:''}
+    <h3>Add your own</h3><div class="row"><input type="text" id="scToll" placeholder="e.g. Clean the fridge" maxlength="120" style="flex:1"><button class="btn sm" data-a="sc-toll-add">Add</button></div>
+    ${SC.custom.length?`<div style="margin-top:8px">${SC.custom.map(c=>`<div class="hist"><span>${esc(c.text)}</span><button class="btn ghost sm" data-a="sc-toll-del" data-id="${c.id}" ${fr?'disabled':''}>Remove</button></div>`).join('')}</div>`:''}
+    ${fr?'<p class="small" style="margin:10px 0 0">While committed you can add tolls or turn more categories on, but not remove them.</p>':''}</div>`;
+}
+function partnerCard(setup){
+  const SC=S.scale,pt=SC.partner;
+  let h='<div class="card"><h2>Who holds your key?</h2>';
+  if(setup)h+=`<div class="chips" style="margin-bottom:10px"><button class="chip ${SC.mode==='partner'?'on':''}" data-a="sc-mode" data-m="partner">Partner decides</button><button class="chip ${SC.mode==='self'?'on':''}" data-a="sc-mode" data-m="self">I pick my tolls</button></div>`;
+  if(SC.mode==='partner'){
+    if(setup)h+=`<p class="small">Miss a Must and the app locks. Your partner chooses your task, and only they can unlock the app. The key lives on their phone, so you can't peek or bargain.</p>
+      <div class="fld"><label for="pName">Partner's name</label><input type="text" id="pName" value="${esc(pt.name)}" maxlength="40" autocomplete="off"></div>
+      <div class="fld" style="margin-top:10px"><label for="pPhone">Partner's phone number</label><input type="text" id="pPhone" inputmode="tel" value="${esc(pt.phone)}" placeholder="+1 555 123 4567" maxlength="25"></div>
+      <div class="fld" style="margin-top:10px"><label for="pPub">Partner code</label><textarea id="pPub" style="min-height:70px;font-size:14px" placeholder="Paste the code your partner sends you">${esc(pt.pub)}</textarea></div>
+      <p class="small" style="margin:8px 0 0">Send them this file. They open it on their phone, tap "I'm someone's accountability partner" on the first screen, and text you the code it shows.</p>`;
+    else h+=`<p style="margin:0">Key holder: <b>${esc(pt.name)}</b> (${esc(pt.phone)}). They choose your task and are the only one who can unlock the app.</p>`;
+  }else if(!setup)h+='<p class="small" style="margin:0">You pick your own tolls.</p>';
+  else h+='<p class="small" style="margin:0">You choose the tolls below, and you unlock the app yourself once you have done one. Partner mode is stronger.</p>';
+  return h+'</div>';
+}
+function scaleHTML(){
+  seedItems();
+  const SC=S.scale,k=todayKey(),fr=frozen(),edit=!SC.committed||!fr;
+  const musts=SC.items.filter(i=>i.tier==='must').length;
+  let h='<h1>The Scale</h1>';
+  const tierRow=i=>`<div class="srow"><div class="top2"><div><b>${esc(i.name)}</b><small>${i.type==='manual'?'You tick this daily':'Tracked automatically'}</small></div>${edit&&i.type==='manual'?`<button class="btn ghost sm" data-a="sc-del" data-id="${i.id}">Remove</button>`:''}</div><div class="tiers">${['must','should','nice'].map(t=>`<button class="chip ${i.tier===t?'on':''}" data-a="sc-tier" data-id="${i.id}" data-t="${t}" ${edit?'':'disabled'}>${TL[t]}</button>`).join('')}</div></div>`;
+  const tolls=SC.mode==='self'?tollsCard():'';
+  if(!SC.committed){
+    h+=`<p class="sub">Weigh every activity. A Must is worth 5 points, a Should 3, a Nice 1. Miss a Must and the app locks until the consequence is paid.</p>
+    <div class="card"><div class="row sp"><h2>Rank your activities</h2><span class="tag ${musts>3?'no':'ok'}">Musts ${musts}/3</span></div><p class="small">Pick at most 3 Musts. Make them the ones that really change your days.</p>${SC.items.map(tierRow).join('')}
+      <h3>Add your own activity</h3><div class="row"><input type="text" id="scName" placeholder="e.g. Read 10 pages" maxlength="60" style="flex:1"><button class="btn sm" data-a="sc-add">Add</button></div></div>
+    ${partnerCard(true)}${tolls}
+    <div class="card"><h2>Commit</h2><p class="small">Once you commit, for 7 days you can't change rankings, partner or tolls, start over, or import a backup. Each day is judged when it ends, and a day only counts if you checked in.</p>
+      <div class="nav" style="margin-top:12px"><button class="btn block" data-a="sc-commit">Commit for 7 days</button></div></div>`;
+  }else{
+    let earned=0,possible=0;SC.items.forEach(i=>{possible+=TW[i.tier];if(itemDone(i,k))earned+=TW[i.tier]});
+    const hist=Object.keys(SC.history).sort().reverse().slice(0,7);
+    h+=`<p class="sub">${fr?`Rankings locked until ${esc(SC.editAfter)}.`:'Your commitment window is over. You can adjust rankings below; that starts a new 7 days.'}</p>
+    <div class="card"><h2>Today's weigh-in</h2>${scaleSVG(earned,possible)}<p class="small" style="text-align:center;margin:0">Day is judged when it ends. A day only counts if you check in.</p></div>
+    <div class="card"><h2>Activities</h2>${SC.items.map(i=>{
+      const done=itemDone(i,k);
+      const tag=`<span class="tag ${i.tier==='must'?'no':'ok'}">${TL[i.tier]} · ${TW[i.tier]}</span>`;
+      if(i.type==='manual')return `<button class="task ${done?'done':''}" data-a="sc-tick" data-id="${i.id}" aria-pressed="${done}"><span class="box">${done?'✓':''}</span><span>${esc(i.name)} ${tag}</span></button>`;
+      return `<div class="hist"><span>${done?'✓ ':''}${esc(i.name)} ${tag}</span><span class="small">${done?'On track':'Open'}</span></div>`;
+    }).join('')}</div>
+    ${edit?`<div class="card"><h2>Adjust rankings</h2>${SC.items.map(tierRow).join('')}<h3>Add your own activity</h3><div class="row"><input type="text" id="scName" placeholder="e.g. Read 10 pages" maxlength="60" style="flex:1"><button class="btn sm" data-a="sc-add">Add</button></div></div>`:''}
+    ${partnerCard(false)}${tolls}
+    <div class="card"><h2>Recent verdicts</h2>${hist.length?hist.map(d=>{const v=SC.history[d];return `<div class="hist"><div><b>${esc(d)}</b><br><small>${v.ok?'All Musts kept':'Missed: '+esc(v.failed.join(', '))}${v.toll?'<br>Task: '+esc(v.toll):''}</small></div><span class="tag ${v.ok?'ok':'no'}">${v.earned}/${v.possible}</span></div>`}).join(''):'<p class="small">The first verdict arrives tomorrow.</p>'}</div>`;
+  }
+  return h+'<div id="sMsg" class="err" role="alert"></div>';
+}
+function smsg(t){const m=$('#sMsg');if(m)m.textContent=t}
+function lockHTML(){
+  const SC=S.scale,p=SC.pending[0],more=SC.pending.length-1;
+  const moreTxt=more>0?`<p class="small">${more} more ${more===1?'task is':'tasks are'} queued after this one.</p>`:'';
+  if(p.mode==='partner'){
+    const pt=SC.partner,num=(pt.phone||'').replace(/[^\d+]/g,'');
+    const body=`Quiet Maze: I missed ${p.failed.join(', ')} on ${p.day}. Please give me a task to earn my unlock. Challenge: ${p.ch}. When I have done it, approve it in your Partner tools and text me the response code.`;
+    return `<div class="lock"><div style="display:flex;gap:10px;align-items:center">${cheeseSVG(44)}<h1 style="margin:0">Locked</h1></div>
+    <p style="margin-top:14px">You missed ${esc(p.failed.join(', '))} on ${esc(p.day)}. ${esc(pt.name)} decides what you do next, and only ${esc(pt.name)} can unlock the app.</p>
+    <div class="card"><h2>1. Ask ${esc(pt.name)} for a task</h2><p class="small">The text includes your challenge code, <b>${esc(p.ch)}</b>.</p>
+      <div class="btns"><a class="btn sm" style="text-decoration:none;display:inline-block" href="sms:${esc(num)}?&body=${encodeURIComponent(body)}">Text ${esc(pt.name)}</a><a class="btn ghost sm" style="text-decoration:none;display:inline-block" href="tel:${esc(num)}">Call</a></div></div>
+    <div class="card"><h2>2. Do the task</h2><textarea id="ptask" placeholder="What did ${esc(pt.name)} ask you to do? (optional note)" aria-label="Task note" style="min-height:80px"></textarea></div>
+    <div class="card"><h2>3. Enter the unlock code</h2><p class="small">When you've finished, ${esc(pt.name)} approves it and texts you a response code.</p>
+      <textarea id="resp" placeholder="Paste the response code" aria-label="Response code" style="min-height:80px;font-size:14px"></textarea>
+      <div class="nav" style="margin-top:12px"><button class="btn block" data-a="sc-unlock">Unlock</button></div><div id="lockMsg" class="err" role="alert"></div></div>${moreTxt}</div>`;
+  }
+  return `<div class="lock"><div style="display:flex;gap:10px;align-items:center">${cheeseSVG(44)}<h1 style="margin:0">Toll due</h1></div>
+  <p style="margin-top:14px">You missed ${esc(p.failed.join(', '))} on ${esc(p.day)}. The app stays locked until you pay the toll you chose.</p>
+  <div class="card"><h2>${esc(p.text)}</h2><p class="small">Do it for real, then write a line about how you did it.</p>
+    <textarea id="proof" placeholder="What did you do?" aria-label="Proof"></textarea>
+    <div class="nav" style="margin-top:12px"><button class="btn block" data-a="sc-pay">I paid the toll</button></div>
+    <div id="lockMsg" class="err" role="alert"></div></div>${moreTxt}</div>`;
+}
+
+/* ---------- Partner (signed unlock, no server) ---------- */
+let partnerMode=false;
+const pv={resp:'',msg:''};
+let partnerMem=null;
+const hasCrypto=()=>typeof crypto!=='undefined'&&!!crypto.subtle;
+const b64u=u8=>btoa(String.fromCharCode(...u8)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const unb64u=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return Uint8Array.from(atob(t),c=>c.charCodeAt(0))};
+const loadPartner=()=>{try{const v=localStorage.getItem('quiet-maze-partner');return v?JSON.parse(v):partnerMem}catch(e){return partnerMem}};
+const savePartner=o=>{partnerMem=o;try{localStorage.setItem('quiet-maze-partner',JSON.stringify(o))}catch(e){}};
+function genChallenge(){
+  const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=new Uint8Array(12);
+  if(hasCrypto())crypto.getRandomValues(r);else for(let i=0;i<12;i++)r[i]=Math.floor(Math.random()*256);
+  const c=Array.from(r,x=>A[x%A.length]).join('');
+  return c.slice(0,4)+'-'+c.slice(4,8)+'-'+c.slice(8);
+}
+const importPub=pub=>{const [x,y]=String(pub).trim().split('.');if(!x||!y)return Promise.reject(new Error('bad'));return crypto.subtle.importKey('jwk',{kty:'EC',crv:'P-256',x,y,ext:true},{name:'ECDSA',namedCurve:'P-256'},false,['verify'])};
+const chBytes=ch=>new TextEncoder().encode(ch.replace(/-/g,''));
+async function verifySig(pub,ch,sig){try{const k=await importPub(pub);return await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},k,unb64u(sig),chBytes(ch))}catch(e){return false}}
+async function genPartnerKey(){
+  const kp=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
+  const jwk=await crypto.subtle.exportKey('jwk',kp.privateKey);
+  savePartner({priv:jwk,pub:jwk.x+'.'+jwk.y});
+}
+async function partnerSign(ch){
+  const PS=loadPartner(),k=await crypto.subtle.importKey('jwk',PS.priv,{name:'ECDSA',namedCurve:'P-256'},false,['sign']);
+  return b64u(new Uint8Array(await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},k,chBytes(ch))));
+}
+function partnerHTML(){
+  const PS=loadPartner();
+  let h=`<button class="btn ghost sm" data-a="p-back">Back</button><h1 style="margin-top:16px">Partner tools</h1><p class="sub">You are holding the key to someone's accountability. They can't unlock their app without you.</p>`;
+  if(!hasCrypto())return h+'<div class="note">This browser blocks the secure features partner tools need. Open the file directly in Chrome or Safari.</div>';
+  if(!PS){
+    h+=`<div class="card"><h2>1. Create your partner code</h2><p class="small">This makes a private key that stays on this phone and a public code you send to your friend.</p><div class="nav"><button class="btn block" data-a="p-create">Create my partner code</button></div></div>`;
+  }else{
+    h+=`<div class="card"><h2>Your partner code</h2><p class="small">Send this to your friend so they can enter it when they commit. Keep this phone and browser: clearing browser data deletes your key.</p>
+      <textarea id="pCode" readonly style="min-height:80px;font-size:14px" aria-label="Partner code">${esc(PS.pub)}</textarea><div class="btns"><button class="btn ghost sm" data-a="copy" data-t="pCode">Copy code</button></div></div>
+    <div class="card"><h2>Approve an unlock</h2><p class="small">When your friend texts you a challenge, give them a task. Approve only after they've done it.</p>
+      <textarea id="pMsg" placeholder="Paste their text message here" aria-label="Their message" style="min-height:90px"></textarea>
+      <div class="nav" style="margin-top:12px"><button class="btn block" data-a="p-approve">Approve unlock</button></div>
+      ${pv.resp?`<h3>Send them this response code</h3><textarea id="pResp" readonly style="min-height:80px;font-size:14px" aria-label="Response code">${esc(pv.resp)}</textarea><div class="btns"><button class="btn ghost sm" data-a="copy" data-t="pResp">Copy code</button></div>`:''}</div>
+    <button class="btn ghost sm" data-a="p-reset">Replace my key</button>`;
+  }
+  return h+`<div id="pStatus" class="small" role="status" style="margin-top:10px">${esc(pv.msg)}</div>`;
+}
+
+/* ---------- Reminders ---------- */
+const REM={
+  morning:{label:'Morning intention',msg:()=>`Day ${Math.min(dayNum(todayKey()),30)}: pick one step and start there.`},
+  evening:{label:'Evening check-in',msg:()=>"Log your limits and tick today's steps."},
+  night:{label:'Wind-down',msg:()=>'Phone across the room. Screens off, lights low.'}
+};
+function banner(t){const el=$('#toast');if(!el)return;el.innerHTML=`<div class="note" style="margin:0"><div class="row sp"><span>${esc(t)}</span><button class="btn ghost sm" data-a="toast-x">Dismiss</button></div></div>`;el.style.display='block'}
+function rmsg(t){const m=$('#rMsg');if(m)m.textContent=t}
+function dueCheck(){
+  const R=S.remind;if(!S.profile||!R.on)return;
+  const now=new Date(),nm=now.getHours()*60+now.getMinutes(),k=todayKey();
+  Object.keys(REM).forEach(id=>{
+    if(!R.enabled[id]||R.last[id]===k)return;
+    const [h,m]=R.times[id].split(':').map(Number),diff=nm-(h*60+m);
+    if(diff<0||diff>15)return;
+    R.last[id]=k;save();
+    banner(REM[id].label+': '+REM[id].msg());
+    if('Notification' in window&&Notification.permission==='granted'){const nb={body:REM[id].label+': '+REM[id].msg(),tag:'qm-'+id,icon:'icons/icon-192.png',badge:'icons/icon-192.png'};try{if(swReg&&swReg.showNotification)swReg.showNotification('The Quiet Maze',nb);else new Notification('The Quiet Maze',nb)}catch(e){}}
+  });
+}
+function makeICS(){
+  const R=S.remind,now=new Date(),nm=now.getHours()*60+now.getMinutes();
+  const z=d=>d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+pad(d.getUTCSeconds())+'Z';
+  const esc2=t=>t.replace(/([,;])/g,'\\$1');
+  const ev=Object.keys(REM).filter(id=>R.enabled[id]).map(id=>{
+    const [h,m]=R.times[id].split(':'),st=new Date();
+    if(nm>=Number(h)*60+Number(m))st.setDate(st.getDate()+1);
+    const ds=st.getFullYear()+pad(st.getMonth()+1)+pad(st.getDate())+'T'+h+m+'00';
+    return ['BEGIN:VEVENT','UID:quiet-maze-'+id+'-'+now.getTime()+'@local','DTSTAMP:'+z(now),'DTSTART:'+ds,'DURATION:PT10M','RRULE:FREQ=DAILY;COUNT=30','SUMMARY:'+esc2('The Quiet Maze: '+REM[id].label),'DESCRIPTION:'+esc2(REM[id].msg()),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc2(REM[id].label),'TRIGGER:PT0M','END:VALARM','END:VEVENT'].join('\r\n');
+  });
+  return ev.length?['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Quiet Maze//EN','CALSCALE:GREGORIAN',...ev,'END:VCALENDAR'].join('\r\n'):'';
+}
+function remindCard(){
+  const R=S.remind;
+  return `<div class="card flat"><h2>Gentle reminders</h2>
+    <p class="small">Notifications are stimulation too, so these are off by default and capped at three a day.</p>
+    ${Object.keys(REM).map(id=>`<div class="rem"><input type="checkbox" id="r_${id}" data-a="r-toggle" data-k="${id}" ${R.enabled[id]?'checked':''}><label for="r_${id}">${REM[id].label}</label><input type="time" data-rk="${id}" value="${R.times[id]}" aria-label="${REM[id].label} time"></div>`).join('')}
+    <div class="btns" style="margin-top:12px"><button class="btn ghost sm" data-a="${R.on?'r-off':'r-on'}">${R.on?'Turn off alerts':'Turn on alerts'}</button><button class="btn ghost sm" data-a="r-ics">Add to calendar (.ics)</button></div>
+    <p class="small" style="margin:10px 0 0">Alerts only appear while this page is open. For reminders that arrive when the app is closed, add them to your calendar, which repeats daily for 30 days.</p>
+    <div id="rMsg" class="small" role="status" style="margin-top:6px">${R.on?'Alerts are on.':''}</div></div>`;
+}
+
+/* ---------- shell ---------- */
+function tabsHTML(){
+  const icons={
+    today:'<path d="M5 20V11a7 7 0 0114 0v9z"/><path d="M3 20h18"/>',
+    scale:'<path d="M12 3v17M7 20h10M4 7h16"/><path d="M4 7l-2 6h4zM20 7l-2 6h4z"/>',
+    urge:'<path d="M2 12c3-6 5-6 8 0s5 6 8 0 3-4 4-4"/>',
+    journal:'<path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M8 4v16"/>',
+    body:'<path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/>',
+    trail:'<circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h6a3 3 0 010 6H10a3 3 0 000 6h6"/>'
+  };
+  const lab={today:'Today',scale:'Scale',urge:'Urge',journal:'Journal',body:'Body',trail:'Trail'};
+  return `<div class="in">${Object.keys(icons).map(v=>`<button class="${view===v?'on':''}" data-a="tab" data-v="${v}" ${view===v?'aria-current="page"':''}><svg viewBox="0 0 24 24" aria-hidden="true">${icons[v]}</svg>${lab[v]}</button>`).join('')}</div>`;
+}
+function render(){
+  const app=$('#app'),tabs=$('#tabs');
+  if(partnerMode){app.innerHTML=partnerHTML();tabs.style.display='none';tabs.innerHTML='';return}
+  if(!S.profile){app.innerHTML=onboardHTML();tabs.style.display='none';tabs.innerHTML='';return}
+  judge();
+  if(S.scale.pending.length){app.innerHTML=lockHTML();tabs.style.display='none';tabs.innerHTML='';return}
+  tabs.style.display='';
+  app.innerHTML=view==='today'?todayHTML():view==='urge'?urgeHTML():view==='journal'?journalHTML():view==='body'?bodyHTML():view==='scale'?scaleHTML():trailHTML();
+  tabs.innerHTML=tabsHTML();
+  if(view==='urge'&&U.phase==='run')tick();
+}
+
+/* ---------- events ---------- */
+const toggle=(arr,v)=>{const i=arr.indexOf(v);i>-1?arr.splice(i,1):arr.push(v)};
+const H={
+  tab(d){view=d.v;render();window.scrollTo(0,0)},
+  'ob-start'(){ob.step=1;render();window.scrollTo(0,0)},
+  'ob-back'(){ob.err='';ob.step=Math.max(0,ob.step-1);render();window.scrollTo(0,0)},
+  'ob-next'(){
+    if(ob.step===2&&!Object.keys(ob.cheeses).some(c=>ob.cheeses[c])){ob.err='Pick at least one to continue.';render();return}
+    ob.err='';
+    if(ob.step===8){finishOnboarding();render();window.scrollTo(0,0);return}
+    ob.step++;render();window.scrollTo(0,0);
+  },
+  'ob-cheese'(d){ob.cheeses[d.c]=!ob.cheeses[d.c];render()},
+  'ob-amt'(d){ob.amounts[d.c]=Math.max(0,ob.amounts[d.c]+Number(d.d));render()},
+  'ob-chip'(d){toggle(ob[d.l],d.v);render()},
+  use(d){const l=L(todayKey());l.usage[d.c]=Math.max(0,(l.usage[d.c]||0)+Number(d.d));render()},
+  task(d){const l=L(todayKey());l.tasks[d.id]=!l.tasks[d.id];render()},
+  mood(d){const l=L(todayKey());l.mood=Number(d.v);render()},
+  urgelvl(d){const l=L(todayKey());l.urge=Number(d.v);render()},
+  'u-cheese'(d){U.cheese=d.c;render()},
+  'u-trig'(d){U.trigger=d.v;render()},
+  'u-start'(){
+    if(!U.cheese)U.cheese=P.cheeses[0];
+    U.phase='run';U.start=Date.now();U.finished=false;U.rep=null;
+    clearInterval(timerId);timerId=setInterval(tick,500);render();
+  },
+  'u-rep'(d){U.rep=d.v;render()},
+  'u-end'(d){
+    clearInterval(timerId);
+    S.urges.unshift({ts:Date.now(),cheese:U.cheese,intensity:U.intensity,trigger:U.trigger,outcome:d.r,secs:Math.floor((Date.now()-U.start)/1000),rep:U.rep});
+    L(todayKey());U.phase='done';U.result=d.r;render();
+  },
+  'u-new'(){U={phase:'pick',cheese:null,intensity:3,trigger:null,start:0,dur:600,rep:null,result:null,finished:false};view='today';render();window.scrollTo(0,0)},
+  'u-journal'(){J.override='What set off the urge, and what did I do?';U={phase:'pick',cheese:null,intensity:3,trigger:null,start:0,dur:600,rep:null,result:null,finished:false};view='journal';render();window.scrollTo(0,0)},
+  'j-next'(){J.override=null;J.pi=((J.pi===null?0:J.pi)+1)%PROMPTS.length;render()},
+  'j-save'(){
+    const t=($('#jText').value||'').trim();if(!t)return;
+    S.journal.unshift({ts:Date.now(),prompt:J.override||PROMPTS[J.pi],text:t});L(todayKey());J.override=null;render();
+  },
+  'j-del'(d){if(confirm('Delete this entry?')){S.journal=S.journal.filter(e=>String(e.ts)!==d.ts);render()}},
+  bhabit(d){const k=todayKey();const r=S.body.days[k]=S.body.days[k]||{};r[d.id]=!r[d.id];render()},
+  'b-weight'(){
+    const w=Number($('#wIn').value),wa=$('#waIn').value===''?null:Number($('#waIn').value);
+    if(!w||w<30||w>300){bmsg('Enter a valid weight in kg.');return}
+    if(wa!==null&&(wa<30||wa>250)){bmsg('Enter a valid waist in cm.');return}
+    const date=todayKey();S.body.weights=S.body.weights.filter(x=>x.date!==date);S.body.weights.push({date,weight:w,waist:wa});
+    render();bmsg('Measurement saved.');
+  },
+  'b-delw'(d){if(confirm('Delete the weigh-in for '+d.date+'?')){S.body.weights=S.body.weights.filter(w=>w.date!==d.date);render()}},
+  'b-targets'(){
+    const st=Number($('#tSteps').value),pr=Number($('#tProt').value),ca=Number($('#tCal').value);
+    if(st<1000||st>30000||pr<50||pr>300||ca<1200||ca>5000){bmsg('Please enter realistic target values.');return}
+    S.body.targets={steps:st,protein:pr,calories:ca};render();bmsg('Targets saved.');
+  },
+  'b-csv'(){
+    const rows=[['date','weight_kg','waist_cm'],...S.body.weights.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(w=>[w.date,w.weight,w.waist==null?'':w.waist])];
+    dl(new Blob([rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'}),'quiet-maze-weights-'+todayKey()+'.csv');
+  },
+  'r-toggle'(d){S.remind.enabled[d.k]=!S.remind.enabled[d.k]},
+  'r-on'(){
+    S.remind.on=true;
+    if('Notification' in window&&Notification.permission==='default'){
+      Notification.requestPermission().then(()=>{save();render();rmsg(Notification.permission==='granted'?'Alerts are on while this page is open.':'System alerts are blocked. You will still see reminders inside the app.')});
+      return;
+    }
+    render();rmsg('Alerts are on while this page is open.');
+  },
+  'r-off'(){S.remind.on=false;render();rmsg('Alerts are off.')},
+  'r-ics'(){
+    const t=makeICS();if(!t){rmsg('Tick at least one reminder first.');return}
+    dl(new Blob([t],{type:'text/calendar'}),'quiet-maze-reminders.ics');rmsg('Calendar file downloaded. Open it to add the daily reminders.');
+  },
+  'toast-x'(){const el=$('#toast');if(el){el.style.display='none';el.innerHTML=''}},
+  'sc-tier'(d){
+    if(frozen()){smsg('Rankings are locked until '+S.scale.editAfter+'.');return}
+    const it=S.scale.items.find(i=>i.id===d.id);if(!it)return;
+    if(d.t==='must'&&it.tier!=='must'&&S.scale.items.filter(i=>i.tier==='must').length>=3){render();smsg('You can have at most 3 Musts. Demote one first.');return}
+    it.tier=d.t;if(S.scale.committed)S.scale.editAfter=(()=>{const x=new Date();x.setDate(x.getDate()+7);return keyOf(x)})();
+    render();
+  },
+  'sc-add'(){
+    if(frozen()){smsg('You can add activities after '+S.scale.editAfter+'.');return}
+    const t=($('#scName').value||'').trim();if(t.length<2){smsg('Name the activity first.');return}
+    S.scale.items.push({id:'m'+Date.now(),type:'manual',name:t,tier:'should'});render();
+  },
+  'sc-del'(d){if(frozen()){smsg('Locked until '+S.scale.editAfter+'.');return}S.scale.items=S.scale.items.filter(i=>i.id!==d.id);render()},
+  'sc-tick'(d){const k=todayKey();const m=S.scale.manual[k]=S.scale.manual[k]||{};m[d.id]=!m[d.id];render()},
+  'sc-cat'(d){
+    const SC=S.scale;
+    if(SC.cats[d.c]&&frozen()){smsg('You can turn categories on, not off, while committed.');return}
+    SC.cats[d.c]=!SC.cats[d.c];
+    if(!tollPool().length){SC.cats[d.c]=true;render();smsg('Keep at least one toll available.');return}
+    render();
+  },
+  'sc-toll-add'(){
+    const t=($('#scToll').value||'').trim();if(t.length<3){smsg('Describe the toll first.');return}
+    S.scale.custom.push({id:'t'+Date.now(),text:t});render();
+  },
+  'sc-toll-del'(d){if(frozen()){smsg('Locked until '+S.scale.editAfter+'.');return}S.scale.custom=S.scale.custom.filter(c=>c.id!==d.id);if(!tollPool().length)S.scale.cats.chores=true;render()},
+  'sc-mode'(d){S.scale.mode=d.m;render()},
+  'sc-commit'(){
+    const SC=S.scale;
+    if(!SC.items.some(i=>i.tier==='must')){smsg('Choose at least one Must.');return}
+    const go=()=>{
+      if(!confirm('Commit for 7 days? You will not be able to change rankings, partner or tolls, start over, or import a backup, and the app locks when you miss a Must.'))return;
+      const t=todayKey(),e=new Date();e.setDate(e.getDate()+7);
+      SC.committed=true;SC.start=t;SC.editAfter=keyOf(e);SC.lastJudged=prevDay(t);save();render();window.scrollTo(0,0);
+    };
+    if(SC.mode==='partner'){
+      const pt=SC.partner;
+      if(!(pt.name||'').trim()){smsg("Enter your partner's name.");return}
+      if((pt.phone||'').replace(/\D/g,'').length<7){smsg("Enter a valid phone number for your partner.");return}
+      if(!hasCrypto()){smsg('This browser blocks the secure features partner mode needs. Open the file directly in Chrome or Safari, or switch to tolls you pick.');return}
+      importPub(pt.pub).then(go).catch(()=>smsg("That partner code isn't valid. Ask your partner to copy it again from Partner tools."));
+    }else go();
+  },
+  'sc-unlock'(){
+    const p=S.scale.pending[0];if(!p||p.mode!=='partner')return;
+    const code=($('#resp').value||'').replace(/\s+/g,''),pt=S.scale.partner;
+    const lm=t=>{const m=$('#lockMsg');if(m)m.textContent=t};
+    if(code.length<20){lm('Paste the full response code from '+pt.name+'.');return}
+    verifySig(pt.pub,p.ch,code).then(ok=>{
+      if(!ok){lm("That code doesn't match this challenge. Ask "+pt.name+' to approve '+p.ch+'.');return}
+      const task=(($('#ptask')&&$('#ptask').value)||'').trim()||'Task set by '+pt.name;
+      S.scale.paid.push({id:p.id,day:p.day,text:task,cat:'partner',proof:'Released by '+pt.name,ts:Date.now()});
+      if(S.scale.history[p.day])S.scale.history[p.day].toll=task;
+      S.scale.pending.shift();save();render();window.scrollTo(0,0);
+      if(!S.scale.pending.length)banner('Unlocked by '+pt.name+'. Back in the maze.');
+    });
+  },
+  'p-open'(){partnerMode=true;render();window.scrollTo(0,0)},
+  'p-back'(){partnerMode=false;pv.resp='';pv.msg='';render()},
+  'p-create'(){
+    genPartnerKey().then(()=>{pv.msg='Partner code created.';render()}).catch(()=>{pv.msg='Could not create a key in this browser.';render()});
+  },
+  'p-approve'(){
+    const m=($('#pMsg').value||'').toUpperCase(),hit=m.match(/[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}/);
+    if(!hit){pv.msg='No challenge code found. Paste the whole text they sent.';render();return}
+    if(!confirm('Approve unlock for challenge '+hit[0]+'? Only do this after they finished the task you gave.'))return;
+    partnerSign(hit[0]).then(sig=>{pv.resp=sig;pv.msg='Approved. Text them the response code below.';render()}).catch(()=>{pv.msg='Could not sign. Try replacing your key.';render()});
+  },
+  'p-reset'(){if(confirm('Replace your partner key? Anyone you are partnering with will need your new code.')){savePartner(null);pv.resp='';pv.msg='';render()}},
+  copy(d){
+    const el=document.getElementById(d.t);if(!el)return;
+    el.focus();el.select();
+    try{navigator.clipboard.writeText(el.value)}catch(e){try{document.execCommand('copy')}catch(_){}}
+    const st=$('#pStatus');if(st)st.textContent='Copied. If it did not copy, the text is selected: use Copy from your phone menu.';
+  },
+  'sc-pay'(){
+    const p=S.scale.pending[0];if(!p)return;
+    const t=($('#proof').value||'').trim();
+    if(t.length<8){const m=$('#lockMsg');if(m)m.textContent='Write a sentence about what you did so it counts.';return}
+    S.scale.paid.push({id:p.id,day:p.day,text:p.text,cat:p.cat,proof:t,ts:Date.now()});
+    if(S.scale.history[p.day])S.scale.history[p.day].toll=p.text;
+    S.scale.pending.shift();render();window.scrollTo(0,0);
+    if(!S.scale.pending.length)banner('Toll paid. You are back in the maze.');
+  },
+  export(){
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`quiet-maze-backup-${todayKey()}.json`;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    const m=$('#dataMsg');if(m)m.textContent='Backup downloaded.';
+  },
+  import(){const f=$('#importFile');if(f)f.click()},
+  reset(){if(locked()){alert('Start over is locked while your Scale commitment is active.');return}if(confirm('Erase everything and start over?')){S=fresh();ob.step=0;ob.err='';view='today';render();window.scrollTo(0,0)}}
+};
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const f=H[el.dataset.a];if(f){f(el.dataset);save()}
+});
+document.addEventListener('change',e=>{
+  if(e.target.dataset&&e.target.dataset.rk){S.remind.times[e.target.dataset.rk]=e.target.value||'08:00';save();return}
+  if(e.target.id!=='importFile')return;
+  const file=e.target.files&&e.target.files[0];if(!file)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const msg=t=>{const m=$('#dataMsg');if(m)m.textContent=t};
+    try{
+      const d=JSON.parse(rd.result);
+      if(d&&Array.isArray(d.weights)&&d.days&&typeof d.days==='object'&&!(d.profile&&d.profile.cheeses)){
+        if(!confirm('This looks like a Fat-loss Tracker backup. Add its weigh-ins, targets and habit history to the Body tab?'))return;
+        const pr=d.profile||{};
+        S.body.weights=d.weights.filter(w=>w&&w.date&&Number(w.weight)).map(w=>({date:w.date,weight:Number(w.weight),waist:w.waist==null?null:Number(w.waist)}));
+        S.body.targets={steps:Number(pr.stepGoal)||8000,protein:Number(pr.proteinTarget)||160,calories:Number(pr.calorieTarget)||2100};
+        Object.keys(d.days).forEach(date=>{const h=(d.days[date]&&d.days[date].habits)||{};S.body.days[date]={steps:!!h.steps,train:!!h.training,sleep:!!h.sleep,protein:!!h.protein}});
+        save();render();msg('Fat-loss Tracker data added to the Body tab.');return;
+      }
+      if(!d||typeof d!=='object'||!d.profile||!d.profile.cheeses||!d.profile.current||typeof d.logs!=='object')throw new Error('bad');
+      if(locked()){msg('Full-backup import is locked while your Scale commitment is active.');return}
+      if(!confirm('Replace your current progress with this backup?'))return;
+      S=fix({profile:d.profile,logs:d.logs||{},urges:Array.isArray(d.urges)?d.urges:[],journal:Array.isArray(d.journal)?d.journal:[],body:d.body,remind:d.remind,scale:d.scale});
+      save();render();msg('Backup restored.');
+    }catch(err){msg('That file is not a valid Quiet Maze backup.')}
+  };
+  rd.readAsText(file);e.target.value='';
+});
+document.addEventListener('input',e=>{
+  const id=e.target.id;
+  if(id==='obName')ob.name=e.target.value;
+  else if(id==='obWhy')ob.why=e.target.value;
+  else if(id==='obFear')ob.fear=e.target.value;
+  else if(id==='scMoney')S.scale.money=e.target.value;
+  else if(id==='pName')S.scale.partner.name=e.target.value;
+  else if(id==='pPhone')S.scale.partner.phone=e.target.value;
+  else if(id==='pPub')S.scale.partner.pub=e.target.value;
+  else if(id==='intens'){U.intensity=Number(e.target.value);const l=$('#intLbl');if(l)l.textContent=['','Faint','Mild','Medium','Strong','Intense'][U.intensity]}
+});
+if(typeof location!=='undefined'&&location.hash==='#partner')partnerMode=true;
+render();
+setInterval(dueCheck,30000);document.addEventListener('visibilitychange',dueCheck);dueCheck();
+</script>
+</body>
+</html>

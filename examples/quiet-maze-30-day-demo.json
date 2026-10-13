@@ -1,0 +1,107 @@
+{
+  "profile": {
+    "name": "Alex",
+    "cheeses": ["social", "gaming", "food"],
+    "current": {"social": 120, "gaming": 60, "food": 3},
+    "triggers": ["Boredom", "Stress", "Late at night"],
+    "times": ["Evening", "Late night"],
+    "reps": ["Walk", "Read", "Breathe"],
+    "why": "Be present for the parts of life I want to remember.",
+    "fear": "I might feel bored at first.",
+    "start": "2026-09-14"
+  },
+  "logs": {
+    "2026-09-14": {"touched": true, "usage": {"social": 80, "gaming": 30, "food": 2}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 3, "urge": 3},
+    "2026-09-15": {"touched": true, "usage": {"social": 75, "gaming": 35, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-09-16": {"touched": true, "usage": {"social": 90, "gaming": 40, "food": 2}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 3, "urge": 4},
+    "2026-09-17": {"touched": true, "usage": {"social": 70, "gaming": 25, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-09-18": {"touched": true, "usage": {"social": 85, "gaming": 45, "food": 2}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 3, "urge": 3},
+    "2026-09-19": {"touched": true, "usage": {"social": 65, "gaming": 20, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 5, "urge": 1},
+    "2026-09-20": {"touched": true, "usage": {"social": 95, "gaming": 35, "food": 2}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-09-21": {"touched": true, "usage": {"social": 70, "gaming": 30, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-09-22": {"touched": true, "usage": {"social": 60, "gaming": 25, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 3, "urge": 3},
+    "2026-09-23": {"touched": true, "usage": {"social": 75, "gaming": 35, "food": 2}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-09-24": {"touched": true, "usage": {"social": 80, "gaming": 30, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 3, "urge": 4},
+    "2026-09-25": {"touched": true, "usage": {"social": 55, "gaming": 20, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-09-26": {"touched": true, "usage": {"social": 70, "gaming": 35, "food": 2}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 3},
+    "2026-09-27": {"touched": true, "usage": {"social": 65, "gaming": 25, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 5, "urge": 1},
+    "2026-09-28": {"touched": true, "usage": {"social": 50, "gaming": 20, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 3, "urge": 3},
+    "2026-09-29": {"touched": true, "usage": {"social": 55, "gaming": 25, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-09-30": {"touched": true, "usage": {"social": 60, "gaming": 30, "food": 2}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-10-01": {"touched": true, "usage": {"social": 45, "gaming": 15, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 5, "urge": 1},
+    "2026-10-02": {"touched": true, "usage": {"social": 55, "gaming": 30, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 3, "urge": 3},
+    "2026-10-03": {"touched": true, "usage": {"social": 40, "gaming": 20, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 4},
+    "2026-10-04": {"touched": true, "usage": {"social": 60, "gaming": 25, "food": 2}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-10-05": {"touched": true, "usage": {"social": 35, "gaming": 10, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-10-06": {"touched": true, "usage": {"social": 45, "gaming": 15, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 3, "urge": 3},
+    "2026-10-07": {"touched": true, "usage": {"social": 40, "gaming": 20, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 5, "urge": 1},
+    "2026-10-08": {"touched": true, "usage": {"social": 30, "gaming": 10, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-10-09": {"touched": true, "usage": {"social": 45, "gaming": 20, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 3},
+    "2026-10-10": {"touched": true, "usage": {"social": 35, "gaming": 15, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 5, "urge": 2},
+    "2026-10-11": {"touched": true, "usage": {"social": 40, "gaming": 15, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 2},
+    "2026-10-12": {"touched": true, "usage": {"social": 30, "gaming": 10, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 4, "urge": 3},
+    "2026-10-13": {"touched": true, "usage": {"social": 35, "gaming": 15, "food": 1}, "tasks": {"general": true, "social": true, "gaming": true}, "mood": 5, "urge": 1}
+  },
+  "urges": [
+    {"ts": 1789565400000, "cheese": "social", "intensity": 4, "trigger": "Boredom", "outcome": "rode", "secs": 600, "rep": "Walk"},
+    {"ts": 1790244000000, "cheese": "gaming", "intensity": 3, "trigger": "Stress", "outcome": "rode", "secs": 600, "rep": "Read"},
+    {"ts": 1791038700000, "cheese": "social", "intensity": 4, "trigger": "Late at night", "outcome": "gave", "secs": 210, "rep": null},
+    {"ts": 1791610200000, "cheese": "food", "intensity": 2, "trigger": "Tiredness", "outcome": "rode", "secs": 480, "rep": "Breathe"}
+  ],
+  "journal": [
+    {"ts": 1789473600000, "prompt": "What did I notice today?", "text": "I left my phone behind and noticed the evening light."},
+    {"ts": 1790164800000, "prompt": "What is changing?", "text": "A walk made the afternoon feel longer in a good way."},
+    {"ts": 1790856000000, "prompt": "What did I choose instead?", "text": "I chose a book when the old urge showed up."},
+    {"ts": 1791547200000, "prompt": "What do I want to carry forward?", "text": "I am learning that I can pause before I follow the old route."}
+  ],
+  "body": {
+    "weights": [
+      {"date": "2026-09-14", "weight": 81.6, "waist": 91.4},
+      {"date": "2026-09-21", "weight": 81.2, "waist": 90.9},
+      {"date": "2026-09-28", "weight": 80.8, "waist": 90.4},
+      {"date": "2026-10-05", "weight": 80.5, "waist": 90.0},
+      {"date": "2026-10-13", "weight": 80.0, "waist": 89.4}
+    ],
+    "days": {
+      "2026-09-15": {"steps": true, "train": false, "sleep": true, "protein": true},
+      "2026-09-19": {"steps": true, "train": true, "sleep": false, "protein": true},
+      "2026-09-24": {"steps": true, "train": false, "sleep": true, "protein": true},
+      "2026-09-29": {"steps": true, "train": true, "sleep": true, "protein": false},
+      "2026-10-03": {"steps": true, "train": false, "sleep": true, "protein": true},
+      "2026-10-07": {"steps": true, "train": true, "sleep": true, "protein": true},
+      "2026-10-10": {"steps": false, "train": true, "sleep": true, "protein": true},
+      "2026-10-13": {"steps": true, "train": false, "sleep": true, "protein": true}
+    },
+    "targets": {"steps": 8000, "protein": 160, "calories": 2100}
+  },
+  "remind": {
+    "on": false,
+    "enabled": {"morning": true, "evening": true, "night": false},
+    "times": {"morning": "08:00", "evening": "20:00", "night": "22:00"},
+    "last": {}
+  },
+  "scale": {
+    "committed": false,
+    "start": null,
+    "editAfter": null,
+    "lastJudged": null,
+    "mode": "self",
+    "items": [
+      {"id": "walk", "type": "manual", "name": "Take a short walk after lunch", "tier": "should"},
+      {"id": "dinner", "type": "manual", "name": "Put my phone away during dinner", "tier": "must"},
+      {"id": "call", "type": "manual", "name": "Call someone I care about", "tier": "nice"}
+    ],
+    "custom": [],
+    "cats": {"chores": true, "awkward": true, "money": true, "effort": true},
+    "pending": [],
+    "history": {},
+    "manual": {
+      "2026-09-16": {"dinner": true},
+      "2026-09-24": {"walk": true, "dinner": true},
+      "2026-10-01": {"dinner": true, "call": true},
+      "2026-10-07": {"walk": true, "dinner": true},
+      "2026-10-13": {"dinner": true}
+    },
+    "paid": []
+  }
+}
